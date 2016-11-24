@@ -21,20 +21,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
     createMain().then(function (mainCanvas) {
         var testCanvas = document.getElementById('test'),
-            lastScore = 0, i = 0;
+            lastScore = 0, i = 0, sh = 0;
         setInterval(function () {
-            var mutation = makeMutation(testCanvas, mainCanvas);
-            // if (mutation.score > lastScore) {
-                console.log(mutation);
+            var mutation = makeMutation(testCanvas, mainCanvas, lastScore);
+            i++;
+            if (mutation.score > lastScore) {
+                sh++;
                 drawTriangle(testCanvas, mutation.shape, mutation.color);
                 lastScore = mutation.score;
-            // }
-        }, 2);
+                document.getElementById('text').innerHTML = 'iterations:' + i + ' shapes:'+sh + ' score:' + mutation.score;
+            }
+        }, 1);
 
 
     });
     
     function getColorUnderShape(mainCanvas, tri) {
+        // var x = (tri[0].x + tri[1].x  +tri[2].x) / 3,
+        //     y = (tri[0].y + tri[1].y  +tri[2].y) / 3;
         var RGB = mainCanvas
             .getContext('2d')
             .getImageData(tri[0].x + (tri[1].x/2), tri[0].y + (tri[1].x/2), 1, 1)
@@ -42,13 +46,13 @@ document.addEventListener("DOMContentLoaded", function () {
         return 'rgb(' + [RGB[0],RGB[1],RGB[2]].join(',') +')';
     }
 
-    function makeMutation(canvas, mainCanvas) {
+    function makeMutation(canvas, mainCanvas, lastScore) {
         var newCanvas = document.createElement('canvas');
         var context = newCanvas.getContext('2d');
         newCanvas.width = canvas.width;
         newCanvas.height = canvas.height;
-        context.drawImage(newCanvas, 0, 0);
-        var tr = createTriangle(newCanvas),
+        context.drawImage(canvas, 0, 0);
+        var tr = createTriangle(newCanvas, lastScore),
             color = getColorUnderShape(mainCanvas, tr.coords);
         drawTriangle(newCanvas, tr.shape, color);
         var myNode = document.getElementById("tt");
@@ -92,10 +96,10 @@ document.addEventListener("DOMContentLoaded", function () {
         ctx.fill(shape);
     }
 
-    function createTriangle(canvas) {
+    function createTriangle(canvas, lastScore) {
         var shape = new Path2D();
         var coords = [{x: randomBTW(canvas.width), y: randomBTW(canvas.height)},
-            {x: randomBTW(10), y:randomBTW(10)},
+            {x: randomBTW(200 - lastScore * 4), y:randomBTW(200 - lastScore * 4)},
             {x: randomBTW(canvas.width), y:randomBTW(canvas.height)}];
         // shape.moveTo(coords[0].x, coords[0].y);
         // shape.lineTo(coords[1].x, coords[1].y);
