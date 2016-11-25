@@ -29,21 +29,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 sh++;
                 drawTriangle(testCanvas, mutation.shape, mutation.color);
                 lastScore = mutation.score;
-                document.getElementById('text').innerHTML = 'iterations:' + i + ' shapes:'+sh + ' score:' + mutation.score;
+                document.getElementById('text').innerHTML = 'iterations:' + i + ' shapes:' + sh + ' score:' + mutation.score;
             }
         }, 1);
 
 
     });
-    
+
     function getColorUnderShape(mainCanvas, tri) {
         // var x = (tri[0].x + tri[1].x  +tri[2].x) / 3,
         //     y = (tri[0].y + tri[1].y  +tri[2].y) / 3;
         var RGB = mainCanvas
             .getContext('2d')
-            .getImageData(tri[0].x + (tri[1].x/2), tri[0].y + (tri[1].x/2), 1, 1)
+            .getImageData(tri[0].x + (tri[1].x / 2), tri[0].y + (tri[1].x / 2), 1, 1)
             .data;
-        return 'rgb(' + [RGB[0],RGB[1],RGB[2]].join(',') +')';
+        return 'rgba(' + [RGB[0], RGB[1], RGB[2], 1].join(',') + ')';
     }
 
     function makeMutation(canvas, mainCanvas, lastScore) {
@@ -99,17 +99,18 @@ document.addEventListener("DOMContentLoaded", function () {
     function createTriangle(canvas, lastScore) {
         var shape = new Path2D();
         var coords = [{x: randomBTW(canvas.width), y: randomBTW(canvas.height)},
-            {x: randomBTW(200 - lastScore * 4), y:randomBTW(200 - lastScore * 4)},
-            {x: randomBTW(canvas.width), y:randomBTW(canvas.height)}];
+            {x: randomBTW(100 - lastScore), y: randomBTW(100 - lastScore)},
+            {x: randomBTW(canvas.width), y: randomBTW(canvas.height)}];
         // shape.moveTo(coords[0].x, coords[0].y);
         // shape.lineTo(coords[1].x, coords[1].y);
         // shape.lineTo(coords[2].x, coords[2].y);
-        shape.rect(coords[0].x, coords[0].y,coords[1].x, coords[1].y);
+        shape.rect(coords[0].x, coords[0].y, coords[1].x, coords[1].y);
         return {shape: shape, coords: coords};
     }
 
     function randomBTW(btw) {
-        return Math.floor(Math.random() * btw);
+        var r = Math.floor(Math.random() * btw);
+        return r < 2 ? 2 : r;
     }
 
 });
