@@ -21,18 +21,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
     createMain().then(function (mainCanvas) {
         var testCanvas = document.getElementById('test'),
-            lastScore = 0, i = 0, sh = 0;
+            lastScore = 0, j = 0, sh = 0;
         setInterval(function () {
-            var mutation = makeMutation(testCanvas, mainCanvas, lastScore);
-            i++;
-            if (mutation.score > lastScore) {
-                sh++;
-                drawTriangle(testCanvas, mutation.shape, mutation.color);
-                lastScore = mutation.score;
-                document.getElementById('text').innerHTML = 'iterations:' + i + ' shapes:' + sh + ' score:' + mutation.score;
+            var mutations = [];
+            for (var i = 0; i < 100; i++) {
+                mutations.push(makeMutation(testCanvas, mainCanvas, lastScore));
             }
-        }, 1);
-
+            mutations.sort(function (a, b) {
+                if (a.score > b.score) {
+                    return -1;
+                } else if (b.score > a.score) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            });
+            j++;
+            if (mutations[0].score > lastScore) {
+                sh++;
+                drawTriangle(testCanvas, mutations[0].shape, mutations[0].color);
+                lastScore = mutations[0].score;
+                document.getElementById('text').innerHTML = 'iterations:' + j + ' shapes:' + sh + ' score:' + mutations[0].score;
+            }
+        }, 50);
 
     });
 
@@ -98,9 +109,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function createTriangle(canvas, lastScore) {
         var shape = new Path2D();
-        var coords = [{x: randomBTW(canvas.width), y: randomBTW(canvas.height)},
-            {x: randomBTW(100 - lastScore), y: randomBTW(100 - lastScore)},
-            {x: randomBTW(canvas.width), y: randomBTW(canvas.height)}];
+        var coords = [{x: randomMax(canvas.width), y: randomMax(canvas.height)},
+            {x: randomBTW(100 - lastScore * 1.5), y: randomBTW(100 - lastScore * 1.5)},
+            {x: randomMax(canvas.width), y: randomMax(canvas.height)}];
         // shape.moveTo(coords[0].x, coords[0].y);
         // shape.lineTo(coords[1].x, coords[1].y);
         // shape.lineTo(coords[2].x, coords[2].y);
@@ -108,9 +119,14 @@ document.addEventListener("DOMContentLoaded", function () {
         return {shape: shape, coords: coords};
     }
 
-    function randomBTW(btw) {
-        var r = Math.floor(Math.random() * btw);
-        return r < 2 ? 2 : r;
+    function randomMax(max) {
+        return Math.floor(Math.random() * max);
+    }
+
+    function randomBTW(max) {
+        var min = max - max,
+            r = Math.random() * (max - min) + min;
+        return r < 4 ? 4 : r;
     }
 
 });
