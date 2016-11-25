@@ -48,11 +48,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     function getColorUnderShape(mainCanvas, tri) {
-        var x = (tri[0].x + tri[1].x  +tri[2].x) / 3,
-            y = (tri[0].y + tri[1].y  +tri[2].y) / 3;
+        // var x = (tri[0].x + tri[1].x  +tri[2].x) / 3,
+        //     y = (tri[0].y + tri[1].y  +tri[2].y) / 3;
         var RGB = mainCanvas
             .getContext('2d')
-            .getImageData(x, y, 1, 1)
+            .getImageData(tri[0].x + (tri[1].x / 2), tri[0].y + (tri[1].x / 2), 1, 1)
             .data;
         return 'rgba(' + [RGB[0], RGB[1], RGB[2], 1].join(',') + ')';
     }
@@ -110,12 +110,12 @@ document.addEventListener("DOMContentLoaded", function () {
     function createTriangle(canvas, lastScore) {
         var shape = new Path2D();
         var coords = [{x: randomMax(canvas.width), y: randomMax(canvas.height)},
-            {x: randomMax(canvas.width), y: randomMax(canvas.height)},
+            {x: randomBTW(100 - lastScore * 2), y: randomBTW(100 - lastScore * 2)},
             {x: randomMax(canvas.width), y: randomMax(canvas.height)}];
-        shape.moveTo(coords[0].x, coords[0].y);
-        shape.lineTo(coords[1].x, coords[1].y);
-        shape.lineTo(coords[2].x, coords[2].y);
-        // shape.rect(coords[0].x, coords[0].y, coords[1].x, coords[1].y);
+        // shape.moveTo(coords[0].x, coords[0].y);
+        // shape.lineTo(coords[1].x, coords[1].y);
+        // shape.lineTo(coords[2].x, coords[2].y);
+        shape.arc(coords[0].x, coords[0].y, coords[1].x, 0, 2 * Math.PI);
         return {shape: shape, coords: coords};
     }
 
