@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
             var context = canvas.getContext('2d');
             var imageObj = new Image();
 
-            imageObj.src = '/winnie.jpg';
+            imageObj.src = './winnie.jpg';
 
             imageObj.onload = function () {
                 context.drawImage(this, 0, 0);
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 lastScore = mutations[0].score;
                 document.getElementById('text').innerHTML = 'iterations:' + j + ' shapes:' + sh + ' score:' + mutations[0].score;
             }
-        }, 50);
+        }, 120);
 
     });
 
@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .getContext('2d')
             .getImageData(tri[0].x + (tri[1].x / 2), tri[0].y + (tri[1].x / 2), 1, 1)
             .data;
-        return 'rgba(' + [RGB[0], RGB[1], RGB[2], 1].join(',') + ')';
+        return 'rgba(' + [RGB[0], RGB[1], RGB[2], .7].join(',') + ')';
     }
 
     function makeMutation(canvas, mainCanvas, lastScore) {
@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
         newCanvas.width = canvas.width;
         newCanvas.height = canvas.height;
         context.drawImage(canvas, 0, 0);
-        var tr = createTriangle(newCanvas, lastScore),
+        var tr = Math.random() >= 0.5 ? createCircle(newCanvas, lastScore) : createSquare(newCanvas, lastScore),
             color = getColorUnderShape(mainCanvas, tr.coords);
         drawTriangle(newCanvas, tr.shape, color);
         var myNode = document.getElementById("tt");
@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function lI(number) {
-        return number;
+        return Math.floor(number / 20) * 20;
     }
 
     function drawTriangle(canvas, shape, color) {
@@ -107,11 +107,18 @@ document.addEventListener("DOMContentLoaded", function () {
         ctx.fill(shape);
     }
 
-    function createTriangle(canvas, lastScore) {
+    function createSquare(canvas, lastScore) {
         var shape = new Path2D();
         var coords = [{x: randomMax(canvas.width), y: randomMax(canvas.height)},
-            {x: randomBTW(100 - lastScore * 2), y: randomBTW(100 - lastScore * 2)},
-            {x: randomMax(canvas.width), y: randomMax(canvas.height)}];
+            {x: randomBTW(100 - lastScore * 1.4), y: randomBTW(100 - lastScore * 1.4)}];
+        shape.rect(coords[0].x, coords[0].y, coords[1].x, coords[1].y);
+        return {shape: shape, coords: coords};
+    }
+
+    function createCircle(canvas, lastScore) {
+        var shape = new Path2D();
+        var coords = [{x: randomMax(canvas.width), y: randomMax(canvas.height)},
+            {x: randomBTW(100 - lastScore * 1.4), y: randomBTW(100 - lastScore * 1.4)}];
         // shape.moveTo(coords[0].x, coords[0].y);
         // shape.lineTo(coords[1].x, coords[1].y);
         // shape.lineTo(coords[2].x, coords[2].y);
@@ -126,7 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function randomBTW(max) {
         var min = max - max,
             r = Math.random() * (max - min) + min;
-        return r < 4 ? 4 : r;
+        return r < 2 ? 2 : r;
     }
 
 });
